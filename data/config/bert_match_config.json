@@ -3,21 +3,21 @@
   "model": "bert_cls_basic",
   "model_config":{
     "n_classes": 3,
-    "dropout": 0.25
+    "dropout": 0.1
   },
-  "labels": ["fake","real"],
-  "n_epochs": 10,
+  "labels": ["entailment", "contradiction", "neutral"],
+  "n_epochs": 3,
   "batch_size": 32,
   "learning_rate": 5e-5,
   "max_grad_norm": 0.5,
   "dataset":{
     "train":{
       "data_file": "data/preprocessed/fake_news_train.tsv",
-      "limit": 10000
+      "limit": 1
     },
     "validation":{
       "data_file": "data/preprocessed/fake_news_train.tsv",
-      "limit": 1000
+      "limit": 1
     },
     "test":{}
   }
