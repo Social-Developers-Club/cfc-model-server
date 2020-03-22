@@ -62,7 +62,7 @@ optimizer = AdamW(model.parameters(), lr=config["learning_rate"],
 scheduler = get_linear_schedule_with_warmup(optimizer, num_warmup_steps=100,
                                             num_training_steps=1000)  # PyTorch scheduler
 
-criterion = nn.CrossEntropyLoss().to(device)
+criterion = nn.CrossEntropyLoss(weight=torch.FloatTensor([2.0, 0.5])).to(device)
 
 best_val_loss = float('inf')
 best_accuracy = .0

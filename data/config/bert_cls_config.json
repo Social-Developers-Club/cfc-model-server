@@ -2,14 +2,14 @@
   "name": "matcher",
   "model": "bert_cls_basic",
   "model_config":{
-    "n_classes": 3,
-    "dropout": 0.25,
+    "n_classes": 2,
+    "dropout": 0.2,
     "max_sequence_length": 30
   },
   "labels": ["fake","real"],
-  "n_epochs": 10,
+  "n_epochs": 20,
   "batch_size": 32,
-  "learning_rate": 1e-4,
+  "learning_rate": 1e-5,
   "max_grad_norm": 0.5,
   "dataset":{
     "train":{

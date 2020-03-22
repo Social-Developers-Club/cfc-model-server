@@ -7,11 +7,23 @@ Filename: model.py
 Date: 21.03.2020
 
 """
-import torch
+import json
 
+import torch
 import torch.nn as nn
 from transformers import BertForSequenceClassification, DistilBertModel
 
+
+def get_config_and_device(config_file, cpu_only=False):
+    # "data/config/bert_cls_config.json"
+    with open(config_file, "r", encoding="utf8") as config_file:
+        config = json.load(config_file)
+
+    # init device
+    device = torch.device("cuda") if torch.cuda.is_available() and not cpu_only else torch.device("cpu")
+    print("Device: " + str(device))
+
+    return config, device
 
 def get_model(model_name, config, device):
     if model_name == "bert_cls_basic":

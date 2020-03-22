@@ -21,6 +21,7 @@ def get_dataset_for_model(model_name, labels, max_sequence_length, config):
         return NLIDataset(labels=labels,**config)
     raise Exception("Unknown model %s" % model_name)
 
+
 class BertPreprocessor:
     def __init__(self):
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
