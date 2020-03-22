@@ -38,12 +38,16 @@ epochs = config["n_epochs"]
 labels = config["labels"]
 
 # load and batch data
-train_dataset: Dataset = get_dataset_for_model(config["model"], config["labels"], config["dataset"]["train"])
+train_dataset: Dataset = get_dataset_for_model(config["model"], config["labels"],
+                                               config["model_config"]["max_sequence_length"],
+                                               config["dataset"]["train"])
 train_loader = torch.utils.data.DataLoader(
     train_dataset,
     batch_size=config["batch_size"], shuffle=True, num_workers=0, pin_memory=True)
 
-val_dataset: Dataset  = get_dataset_for_model(config["model"], config["labels"], config["dataset"]["validation"])
+val_dataset: Dataset = get_dataset_for_model(config["model"], config["labels"],
+                                             config["model_config"]["max_sequence_length"],
+                                             config["dataset"]["validation"])
 val_loader = torch.utils.data.DataLoader(
     val_dataset,
     batch_size=config["batch_size"], shuffle=True, num_workers=0, pin_memory=True)
@@ -105,6 +109,6 @@ for epoch in range(1, epochs + 1):
     if val_loss < best_val_loss:
         best_accuracy = accuracy
         best_val_loss = val_loss
-        torch.save(model.state_dict(), os.path.join(model_path, "nli_model_basic.pt"))
+        torch.save(model.state_dict(), os.path.join(model_path, config["model"] + ".pt"))
     print("Epoch {0}, Val loss {1:.04f}, Accuracy: {2:.04f}".format(epoch, val_loss, accuracy))
     model.train()

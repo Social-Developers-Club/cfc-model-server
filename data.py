@@ -13,7 +13,8 @@ from torch.utils.data import Dataset
 from transformers import BertTokenizer
 
 
-def get_dataset_for_model(model_name, labels, config):
+def get_dataset_for_model(model_name, labels, max_sequence_length, config):
+    config["max_sequence_length"] = max_sequence_length
     if model_name == "bert_cls_basic":
         return ClassificationDataset(labels=labels,**config)
     elif model_name == "bert_matcher_basic":
@@ -37,7 +38,7 @@ class BertPreprocessor:
 
 
 class ClassificationDataset(Dataset):
-    def __init__(self, data_file, max_length=60, limit=0, device=None, labels=[]):
+    def __init__(self, data_file, max_sequence_length=10, limit=0, device=None, labels=[]):
         super(ClassificationDataset, self).__init__()
 
         self.csv_file = data_file
@@ -48,7 +49,7 @@ class ClassificationDataset(Dataset):
 
         self.preprocessor = BertPreprocessor()
         self.device = device
-        self.max_length = max_length
+        self.max_length = max_sequence_length
         self.labels = labels
 
     def _get_label_id(self, name):
@@ -70,10 +71,10 @@ class ClassificationDataset(Dataset):
         return ["token_id_tensor", "type_id_tensor", "attn_mask_tensor", "label"]
 
 class NLIDataset(Dataset):
-    def __init__(self, dataset_file, max_length=60, limit=0, device=None, labels=[]):
+    def __init__(self, data_file, max_sequence_length=10, limit=0, device=None, labels=[]):
         super(NLIDataset, self).__init__()
 
-        self.csv_file = dataset_file
+        self.csv_file = data_file
         csv_props = {"header": 0, "sep": "\t", "encoding": 'utf8'}
         if limit > 0:
             csv_props["nrows"] = limit
@@ -81,7 +82,7 @@ class NLIDataset(Dataset):
 
         self.preprocessor = BertPreprocessor()
         self.device = device
-        self.max_length = max_length
+        self.max_length = max_sequence_length
         self.labels = labels
 
     def _get_label_id(self, name):
@@ -96,10 +97,12 @@ class NLIDataset(Dataset):
         sentence_a = row["sentenceA"]
         sentence_b = row["sentenceB"]
         label = self._get_label_id(row["label"])
-        token_id_tensor, type_id_tensor, attn_mask_tensor = self.preprocessor.process_text(sentence_a, sentence_b,
-                                                                                           self.max_length)
 
-        return token_id_tensor, type_id_tensor, attn_mask_tensor, label
+        token_id_tensor_a, _, attn_mask_tensor_a = self.preprocessor.process_text(sentence_a, None,
+                                                                                  self.max_length)
+        token_id_tensor_b, _, attn_mask_tensor_b = self.preprocessor.process_text(sentence_b, None,
+                                                                                           self.max_length)
+        return token_id_tensor_a, attn_mask_tensor_a, token_id_tensor_b, attn_mask_tensor_b, label
 
     def get_columns(self):
-        return ["token_id_tensor", "type_id_tensor", "attn_mask_tensor","label"]
+        return ['token_id_tensor_a', 'attn_mask_tensor_a', 'token_id_tensor_b', 'attn_mask_tensor_b', "label"]

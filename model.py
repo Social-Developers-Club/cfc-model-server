@@ -31,7 +31,7 @@ def copy_to_device(tensors, columns, device):
     return data
 
 class BertMatcherModel(nn.Module):
-    def __init__(self, n_classes=3, dropout=0.1):
+    def __init__(self, n_classes=3, dropout=0.1, max_sequence_length=50):
         """
         Matcher Modell
         :param n_outputs:
@@ -40,10 +40,12 @@ class BertMatcherModel(nn.Module):
 
         self.dropout = nn.Dropout(dropout)
 
-        self.distilbert_hidden_dim = 3072
-        self.matched_dim = 1024
+        self.max_sequence_length = max_sequence_length
+        self.distilbert_hidden_dim = 768
+        self.matched_dim = 4096
 
-        self.matcher = nn.Linear(in_features=self.distilbert_hidden_dim, out_features=self.matched_dim)
+        self.matcher = nn.Linear(in_features=2 * self.distilbert_hidden_dim * max_sequence_length,
+                                 out_features=self.matched_dim)
         self.predictor = nn.Linear(in_features=self.matched_dim, out_features=n_classes)
 
         self.distilbert_model = DistilBertModel.from_pretrained("distilbert-base-german-cased", force_download=False, proxies={},
@@ -68,7 +70,7 @@ class BertMatcherModel(nn.Module):
         return predicted_a_b
 
 class BertClassifierModel(nn.Module):
-    def __init__(self, n_classes=3, dropout=0.2):
+    def __init__(self, n_classes=3, dropout=0.2, max_sequence_length=100):
         """
         Simple classifier model: BERT + Linear on top of pooled output last layer
         :param n_classes:

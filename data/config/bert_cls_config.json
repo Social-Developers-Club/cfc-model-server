@@ -3,12 +3,13 @@
   "model": "bert_cls_basic",
   "model_config":{
     "n_classes": 3,
-    "dropout": 0.25
+    "dropout": 0.25,
+    "max_sequence_length": 30
   },
   "labels": ["fake","real"],
   "n_epochs": 10,
   "batch_size": 32,
-  "learning_rate": 5e-5,
+  "learning_rate": 1e-4,
   "max_grad_norm": 0.5,
   "dataset":{
     "train":{

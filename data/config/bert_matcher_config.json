@@ -1,0 +1,25 @@
+{
+  "name": "matcher",
+  "model": "bert_matcher_basic",
+  "model_config":{
+    "n_classes": 3,
+    "dropout": 0.1,
+    "max_sequence_length": 30
+  },
+  "labels": ["entailment", "contradiction", "neutral"],
+  "n_epochs": 10,
+  "batch_size": 16,
+  "learning_rate": 1e-4,
+  "max_grad_norm": 0.5,
+  "dataset":{
+    "train":{
+      "data_file": "data/preprocessed/mnli_train_translated_fixed.tsv",
+      "limit": 2000
+    },
+    "validation":{
+      "data_file": "data/preprocessed/mnli_train_translated_fixed.tsv",
+      "limit": 100
+    },
+    "test":{}
+  }
+}
